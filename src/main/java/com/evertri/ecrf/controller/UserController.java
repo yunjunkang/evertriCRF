@@ -2,6 +2,7 @@ package com.evertri.ecrf.controller;
 
 import com.evertri.ecrf.model.User;
 import com.evertri.ecrf.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +27,9 @@ public class UserController {
     // Get user by id
     @GetMapping("/{id}")
     public User findById(@PathVariable Long id) {
-        return userService.findById(id);
+        return userService.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
     }
+
 
     // Save new user
     @PostMapping

@@ -17,6 +17,10 @@ public class Study {
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL)
     private List<Form> forms;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_study", joinColumns = @JoinColumn(name = "study_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private List<User> users;
+
     //default constructor
     public Study() {
     }
@@ -50,6 +54,14 @@ public class Study {
         this.forms = forms;
     }
 
+    //getter and setter for users list
+    public List<User> getUsers() {
+        return users;
+    }
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
+
     //custom method to add a form to the study
     public void addForm(Form form) {
         forms.add(form);
@@ -60,5 +72,17 @@ public class Study {
     public void removeForm(Form form) {
         forms.remove(form);
         form.setStudy(null);
+    }
+
+    //custom method to add a user to the study
+    public void addUser(User user) {
+        users.add(user);
+        user.getStudies().add(this);
+    }
+
+    //custom method to remove a user from the study
+    public void removeUser(User user) {
+        users.remove(user);
+        user.getStudies().remove(this);
     }
 }

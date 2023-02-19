@@ -46,7 +46,7 @@ public class StudyService {
      * @return study object
      */
     public Study findById(Long id) {
-        return studyRepository.findById(id);
+        return studyRepository.findById(id).orElse(null);
     }
 
     /**
