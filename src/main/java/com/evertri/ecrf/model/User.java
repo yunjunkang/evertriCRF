@@ -3,6 +3,8 @@ package com.evertri.ecrf.model;
 import jakarta.persistence.*;
 import java.util.List;
 
+
+
 @Entity
 @Table(name = "user")
 public class User {
@@ -75,7 +77,7 @@ public class User {
         study.getUsers().remove(this);
     }
 
-    //custom method to check if the user has authorization to view a specific study
+    // Custom method to check if the user has authorization to view a specific study
     public boolean hasAuthorization(Study study) {
         return studies.contains(study);
     }

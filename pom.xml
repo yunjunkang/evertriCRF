@@ -109,6 +109,11 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>3.0.0-M9</version>
         </dependency>
+        <dependency>
+            <groupId>org.evosuite</groupId>
+            <artifactId>evosuite-master</artifactId>
+            <version>1.0.5</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

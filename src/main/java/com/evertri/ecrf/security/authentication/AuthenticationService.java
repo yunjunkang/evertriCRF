@@ -1,12 +1,30 @@
 package com.evertri.ecrf.security.authentication;
 
+import com.evertri.ecrf.model.Device;
+import com.evertri.ecrf.model.Study;
+import com.evertri.ecrf.model.User;
+import com.evertri.ecrf.repository.StudyRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.evertri.ecrf.repository.UserRepository;
+import com.evertri.ecrf.repository.DeviceRepository;
+
+
 
 @Service
 public class AuthenticationService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private StudyRepository studyRepository;
+
+    @Autowired
+    private DeviceRepository deviceRepository;
 
     // Generates a JWT token for the given username
     public String generateToken(String username) {
@@ -26,33 +44,27 @@ public class AuthenticationService {
         }
     }
 
-    // Checks if the given username and MAC address are authorized
-    public boolean isAuthorized(String username, String macAddress) {
-        return isUserAuthorized(username) && isDeviceAuthorized(macAddress);
+    // Checks if the given username and MAC address are authorized to access the study with the given ID
+    public boolean isAuthorized(String username, String macAddress, Long studyId) {
+        return isUserAuthorized(username, studyId) && isDeviceAuthorized(macAddress);
     }
 
-    // Checks if the given username is authorized
-    private boolean isUserAuthorized(String username) {
-        // Make a request to the user database to verify the authenticity of the user
-        // ...
-
-        // Parse the response from the user database
-        // ...
-
-        // Return true if the user is authorized, false otherwise
-        return true;
+    protected boolean isUserAuthorized(String username, Long studyId) {
+        User user = userRepository.findByUsername(username);
+        Study study = studyRepository.findById(studyId).orElse(null);
+        return user != null && study != null && user.hasAuthorization(study);
     }
+
+
+
 
     // Checks if the given MAC address is authorized
     private boolean isDeviceAuthorized(String macAddress) {
         // Make a request to the device database to verify the authenticity of the device
-        // ...
-
-        // Parse the response from the device database
-        // ...
+        Device device = deviceRepository.findByMacAddress(macAddress);
 
         // Return true if the device is authorized, false otherwise
-        return true;
+        return device != null && device.isAuthorized();
     }
 
     // Extracts the username from the given JWT token
@@ -64,5 +76,4 @@ public class AuthenticationService {
 
         return claims.getSubject();
     }
-
 }

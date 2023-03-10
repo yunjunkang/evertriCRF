@@ -16,14 +16,17 @@ public class AuthenticationController {
     // This method handles HTTP GET requests to /authenticate, which authenticates the user
     @GetMapping("/authenticate")
     public ResponseEntity<String> authenticate(@RequestParam("username") String username,
-                                               @RequestParam("macAddress") String macAddress) {
+                                               @RequestParam("macAddress") String macAddress,
+                                               @RequestParam("studyId") Long studyId) {
         // Check if the user is authorized by the authentication service
-        if (authenticationService.isAuthorized(username, macAddress)) {
-            // Return a response entity with the string "Authorized" and a status code of OK
-            return new ResponseEntity<>("Authorized", HttpStatus.OK);
+        if (authenticationService.isAuthorized(username, macAddress, studyId)) {
+            // Generate a token for the user
+            String token = authenticationService.generateToken(username);
+            // Return a response entity with the token and a status code of OK
+            return new ResponseEntity<>(token, HttpStatus.OK);
         } else {
-            // Return a response entity with the string "Unauthorized" and a status code of UNAUTHORIZED
-            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+            // Return a response entity with a status code of UNAUTHORIZED
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 }

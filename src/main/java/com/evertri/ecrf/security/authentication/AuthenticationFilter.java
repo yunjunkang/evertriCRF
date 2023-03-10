@@ -43,8 +43,14 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         // Get the username from the JWT token
         String username = authenticationService.getUsernameFromToken(jwtToken);
 
+        // Get the MAC address from the request header
+        String macAddress = request.getHeader("macAddress");
+
+        // Get the study ID from the request parameter
+        Long studyId = Long.parseLong(request.getParameter("studyId"));
+
         // Check if the user is authorized to access the resource
-        if (authenticationService.isAuthorized(username, request.getHeader("macAddress"))) {
+        if (authenticationService.isAuthorized(username, macAddress, studyId)) {
             filterChain.doFilter(request, response);
         } else {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
